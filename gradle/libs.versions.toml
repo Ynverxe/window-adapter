@@ -1,0 +1,18 @@
+[versions]
+minestom = "59406d5b54"
+netty = "4.1.113.Final"
+paperweight-userdev = "1.7.2"
+run-paper = "2.3.1"
+paper-api = "1.21-R0.1-SNAPSHOT"
+
+[libraries]
+minestom = { module = "net.minestom:minestom-snapshots", version.ref = "minestom" }
+netty = { module = "io.netty:netty-all", version.ref = "netty" }
+paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
+
+[plugins]
+paperweight-userdev = { id = "io.papermc.paperweight.userdev", version.ref = "paperweight-userdev" }
+run-paper = { id = "xyz.jpenilla.run-paper", version.ref = "run-paper" }
+
+[bundles]
+base = ["minestom", "netty"]
