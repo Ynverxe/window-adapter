@@ -1,6 +1,5 @@
 package com.github.ynverxe.windowadapter.netty;
 
-import com.github.ynverxe.windowadapter.player.PlayerConnectionBridge;
 import com.github.ynverxe.windowadapter.player.InventoryNetworkingHandler;
 import com.github.ynverxe.windowadapter.protocol.AllowedPackets;
 import io.netty.buffer.ByteBuf;
