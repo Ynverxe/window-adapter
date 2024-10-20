@@ -5,6 +5,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.inventory.Inventory;
 import net.minestom.server.network.player.PlayerConnection;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.github.ynverxe.windowadapter.player.PlayerConnectionCache.*;
 
@@ -40,5 +41,17 @@ public final class PlayerHelper {
       INSTANCE.bind(bukkitPlayer, playerConnectionBridge);
       return playerConnectionBridge;
     }
+  }
+
+  public static @Nullable PlayerConnectionBridge cachedConnection(@NotNull org.bukkit.entity.Player bukkitPlayer) {
+    synchronized (bukkitPlayer) {
+      return INSTANCE.get(bukkitPlayer);
+    }
+  }
+
+  public static @NotNull org.bukkit.entity.Player fromMinestomPlayer(@NotNull Player minestomPlayer) {
+    PlayerConnectionBridge connection = (PlayerConnectionBridge) minestomPlayer.getPlayerConnection();
+
+    return connection.inventoryNetworkingHandler().bukkitPlayer();
   }
 }
