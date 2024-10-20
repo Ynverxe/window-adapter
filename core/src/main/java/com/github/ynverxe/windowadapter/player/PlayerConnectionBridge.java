@@ -41,6 +41,7 @@ public class PlayerConnectionBridge extends PlayerConnection {
       return;
     }
 
+    Player bukkitPlayer = this.inventoryNetworkingHandler.bukkitPlayer();
     byte containerId = (byte) this.inventoryNetworkingHandler.bukkitContainerId();
     if (playPacket instanceof OpenWindowPacket openWindowPacket) {
       this.inventoryNetworkingHandler.onMinestomInventoryOpen();
@@ -50,6 +51,13 @@ public class PlayerConnectionBridge extends PlayerConnection {
           openWindowPacket.windowType(),
           openWindowPacket.title()
       );
+
+      // To avoid conflict between shadowed libraries
+      LibrarySynchronizer.INSTANCE.ownPlayer(bukkitPlayer);
+    }
+
+    if (playPacket instanceof CloseWindowPacket) {
+      LibrarySynchronizer.INSTANCE.removeCloser(bukkitPlayer);
     }
 
     if (playPacket instanceof WindowItemsPacket windowItemsPacket) {
@@ -93,6 +101,10 @@ public class PlayerConnectionBridge extends PlayerConnection {
   @Override
   public @NotNull ConnectionState getConnectionState() {
     return ConnectionState.PLAY;
+  }
+
+  public InventoryNetworkingHandler inventoryNetworkingHandler() {
+    return inventoryNetworkingHandler;
   }
 
   private void addChannelHandlersIfAbsent() {

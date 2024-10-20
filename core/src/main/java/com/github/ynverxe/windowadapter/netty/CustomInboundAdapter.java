@@ -1,20 +1,25 @@
 package com.github.ynverxe.windowadapter.netty;
 
 import com.github.ynverxe.windowadapter.player.InventoryNetworkingHandler;
+import com.github.ynverxe.windowadapter.player.PlayerHelper;
 import com.github.ynverxe.windowadapter.protocol.AllowedPackets;
+import com.github.ynverxe.windowadapter.util.LibrarySynchronizer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.listener.WindowListener;
 import net.minestom.server.listener.manager.PacketListenerManager;
 import net.minestom.server.network.ConnectionState;
 import net.minestom.server.network.NetworkBuffer;
 import net.minestom.server.network.PacketProcessor;
 import net.minestom.server.network.packet.client.ClientPacket;
+import net.minestom.server.network.packet.client.play.ClientCloseWindowPacket;
 import net.minestom.server.network.player.PlayerConnection;
 import net.minestom.server.utils.binary.BinaryBuffer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -26,6 +31,17 @@ public class CustomInboundAdapter extends ChannelInboundHandlerAdapter {
   private static final Logger LOGGER = LoggerFactory.getLogger("CustomInboundAdapter");
   private static final PacketListenerManager PACKET_LISTENER_MANAGER = new PacketListenerManager();
   private static final PacketProcessor PACKET_PROCESSOR = MinecraftServer.getPacketProcessor();
+
+  {
+    PACKET_LISTENER_MANAGER.setPlayListener(ClientCloseWindowPacket.class, (clientCloseWindowPacket, player) -> {
+      try {
+        WindowListener.closeWindowListener(clientCloseWindowPacket, player);
+      } finally {
+        Player bukkitPlayer = PlayerHelper.fromMinestomPlayer(player);
+        LibrarySynchronizer.INSTANCE.removeCloser(bukkitPlayer);
+      }
+    });
+  }
 
   private final @NotNull ChannelInboundHandlerAdapter vanillaDelegate;
   private @Nullable BinaryBuffer incompletePacket;

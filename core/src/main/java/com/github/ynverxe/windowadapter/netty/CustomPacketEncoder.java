@@ -15,6 +15,7 @@ import net.minestom.server.network.NioBufferExtractor;
 import net.minestom.server.network.packet.server.ServerPacket;
 import net.minestom.server.network.packet.server.ServerPacket.Play;
 import net.minestom.server.network.packet.server.play.CloseWindowPacket;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 public class CustomPacketEncoder extends MessageToByteEncoder<Object> {
@@ -50,9 +51,16 @@ public class CustomPacketEncoder extends MessageToByteEncoder<Object> {
     } else {
       int id = NMSModule.instance().packetId(msg);
 
-      // Detect when a bukkit inventory is open and close the minestom inventory silently
       if (id == 0x33) { // Open Screen packet
+        // Detect when a bukkit inventory is open
+        // and close the minestom inventory silently
         if (this.inventoryNetworkingHandler.hasBukkitInventoryOpen()) {
+          this.inventoryNetworkingHandler.closeInventorySilently();
+        }
+
+        // Detect when a new Minestom inventory tries to be opened,
+        // It may be triggered by another instance of WindowAdapter present in the classpath.
+        if (this.inventoryNetworkingHandler.hasMinestomInventoryOpen()) {
           this.inventoryNetworkingHandler.closeInventorySilently();
         }
       }
@@ -78,5 +86,9 @@ public class CustomPacketEncoder extends MessageToByteEncoder<Object> {
 
       byteBuf.writeBytes(nioBuffer);
     }
+  }
+
+  private static JavaPlugin providingPlugin() {
+    return JavaPlugin.getProvidingPlugin(CustomPacketEncoder.class);
   }
 }
