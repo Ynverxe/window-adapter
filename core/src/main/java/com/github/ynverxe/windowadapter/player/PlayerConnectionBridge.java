@@ -4,6 +4,7 @@ import com.github.ynverxe.windowadapter.netty.CustomInboundAdapter;
 import com.github.ynverxe.windowadapter.netty.CustomPacketEncoder;
 import com.github.ynverxe.windowadapter.protocol.AllowedPackets;
 import com.github.ynverxe.windowadapter.nms.common.NMSModule;
+import com.github.ynverxe.windowadapter.util.LibrarySynchronizer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -12,6 +13,7 @@ import java.util.Objects;
 import net.minestom.server.network.ConnectionState;
 import net.minestom.server.network.packet.server.SendablePacket;
 import net.minestom.server.network.packet.server.ServerPacket.Play;
+import net.minestom.server.network.packet.server.play.CloseWindowPacket;
 import net.minestom.server.network.packet.server.play.OpenWindowPacket;
 import net.minestom.server.network.packet.server.play.SetSlotPacket;
 import net.minestom.server.network.packet.server.play.WindowItemsPacket;
@@ -25,7 +27,6 @@ public class PlayerConnectionBridge extends PlayerConnection {
 
   public PlayerConnectionBridge(@NotNull Player bukkitPlayer) {
     this.inventoryNetworkingHandler = new InventoryNetworkingHandler(this, bukkitPlayer);
-    addChannelHandlersIfAbsent();
   }
 
   @Override
@@ -91,6 +92,13 @@ public class PlayerConnectionBridge extends PlayerConnection {
     }
 
     NMSModule.instance().sendPacket(inventoryNetworkingHandler.bukkitPlayer(), playPacket);
+  }
+
+  @Override
+  public void setPlayer(net.minestom.server.entity.Player player) {
+    super.setPlayer(player);
+
+    addChannelHandlersIfAbsent();
   }
 
   @Override
