@@ -38,7 +38,7 @@ public final class PlayerHelper {
       }
 
       PlayerConnectionBridge playerConnectionBridge = new PlayerConnectionBridge(bukkitPlayer);
-      new Player(bukkitPlayer.getUniqueId(), bukkitPlayer.getName(), playerConnectionBridge);
+      new DelegatedPlayer(bukkitPlayer, playerConnectionBridge);
       INSTANCE.bind(bukkitPlayer, playerConnectionBridge);
       return playerConnectionBridge;
     }
